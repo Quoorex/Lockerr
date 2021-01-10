@@ -7,10 +7,12 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/Quoorex/Lockerr/internal/events"
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 )
 
+// Run starts the discord bot.
 func Run() {
 	// Load the .env file.
 	err := godotenv.Load()
@@ -18,20 +20,16 @@ func Run() {
 		log.Fatal("Error loading .env file")
 	}
 
-	dg, err := discordgo.New("Bot " + os.Getenv("BOT_TOKEN"))
+	s, err := discordgo.New("Bot " + os.Getenv("BOT_TOKEN"))
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
 
-	// Register the messageCreate func as a callback for MessageCreate events.
-	dg.AddHandler(messageCreate)
-
-	// In this example, we only care about receiving message events.
-	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages)
+	registerEvents(s)
 
 	// Open a websocket connection to Discord and begin listening.
-	err = dg.Open()
+	err = s.Open()
 	if err != nil {
 		fmt.Println("error opening connection,", err)
 		return
@@ -44,7 +42,12 @@ func Run() {
 	<-sc
 
 	// Cleanly close down the Discord session.
-	dg.Close()
+	s.Close()
+}
+
+// Registers all event handlers.
+func registerEvents(s *discordgo.Session) {
+	s.AddHandler(events.NewReadyHandler().Handler)
 }
 
 // This function will be called (due to AddHandler above) every time a new
