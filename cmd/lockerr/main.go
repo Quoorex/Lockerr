@@ -15,13 +15,20 @@ import (
 
 // Starts the discord bot.
 func main() {
-	// Load the .env file.
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	// Load the .env file if it exists.
+	if _, err := os.Stat(".env"); err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 
-	s, err := discordgo.New("Bot " + os.Getenv("BOT_TOKEN"))
+	token := os.Getenv("BOT_TOKEN")
+	if token == "" {
+		log.Fatal("No bot token has been configured.")
+	}
+
+	s, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
