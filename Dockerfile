@@ -5,7 +5,8 @@ RUN apk add --no-cache git build-base
 
 COPY . .
 RUN go mod tidy
-RUN go build -o bin/lockerr main.go
+# Build the binary without debug information.
+RUN go build -o bin/lockerr -ldflags '-w -s' main.go
 
 FROM alpine:latest AS final
 WORKDIR /app
