@@ -1,4 +1,4 @@
-module lockerr
+module github.com/Quoorex/Lockerr
 
 go 1.15
 
