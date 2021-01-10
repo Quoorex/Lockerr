@@ -11,4 +11,6 @@ FROM alpine:latest AS final
 WORKDIR /app
 COPY --from=build /build/bin .
 
+ENV BOT_TOKEN=""
+
 CMD ./lockerr
