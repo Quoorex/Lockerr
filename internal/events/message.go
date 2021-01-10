@@ -12,7 +12,7 @@ func NewMessageHandler() *MessageHandler {
 	return &MessageHandler{}
 }
 
-// Handle handles newly creates messages.
+// Handle handles newly created messages.
 func (h *MessageHandler) Handle(s *discordgo.Session, e *discordgo.MessageCreate) {
 
 }

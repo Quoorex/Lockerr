@@ -56,6 +56,7 @@ func Run() {
 func registerEvents(s *discordgo.Session) {
 	s.AddHandler(events.NewReadyHandler().Handle)
 	s.AddHandler(events.NewMessageHandler().Handle)
+	s.AddHandler(events.NewVoiceStateUpdateHandler().Handle)
 }
 
 func registerCommands(s *discordgo.Session, prefix string) {
