@@ -1,5 +1,5 @@
 build:
-	go build -o bin/lockerr-linux -ldflags '-w -s' -a main.go
+	go build -o bin/lockerr-linux -ldflags '-w -s' -a cmd/lockerr/main.go
 	upx --lzma bin/lockerr-linux
 
 test:
@@ -7,9 +7,9 @@ test:
 
 compile:
 	# Cross compile for every major platform.
-	GOOS=linux GOARCH=amd64 go build -o bin/lockerr-linux -ldflags '-w -s' -a main.go
-	GOOS=darwin GOARCH=amd64 go build -o bin/lockerr-macos -ldflags '-w -s' -a main.go
-	GOOS=windows GOARCH=amd64 go build -o bin/lockerr-windows.exe -ldflags '-w -s' -a main.go
+	GOOS=linux GOARCH=amd64 go build -o bin/lockerr-linux -ldflags '-w -s' -a cmd/lockerr/main.go
+	GOOS=darwin GOARCH=amd64 go build -o bin/lockerr-macos -ldflags '-w -s' -a cmd/lockerr/main.go
+	GOOS=windows GOARCH=amd64 go build -o bin/lockerr-windows.exe -ldflags '-w -s' -a cmd/lockerr/main.go
 
 compress:
 	upx --lzma bin/lockerr-windows.exe
@@ -22,4 +22,4 @@ compress:
 release: compile compress
 
 run:
-	go run main.go
+	go run cmd/lockerr/main.go

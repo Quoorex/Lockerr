@@ -12,7 +12,7 @@ RUN go mod download
 
 COPY . .
 # Build the binary without debug information.
-RUN go build -o bin/lockerr -ldflags '-w -s' main.go
+RUN go build -o bin/lockerr -ldflags '-w -s' cmd/lockerr/main.go
 # Compress the binary using upx.
 RUN upx --lzma bin/lockerr
 

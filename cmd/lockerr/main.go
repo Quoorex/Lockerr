@@ -1,4 +1,4 @@
-package lockerr
+package main
 
 import (
 	"fmt"
@@ -13,8 +13,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Run starts the discord bot.
-func Run() {
+// Starts the discord bot.
+func main() {
 	// Load the .env file.
 	err := godotenv.Load()
 	if err != nil {
