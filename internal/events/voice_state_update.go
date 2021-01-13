@@ -3,6 +3,7 @@ package events
 import (
 	"fmt"
 
+	"github.com/Quoorex/Lockerr/internal/storage"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -22,12 +23,28 @@ func (h *VoiceStateUpdateHandler) Handle(s *discordgo.Session, e *discordgo.Voic
 	}
 
 	if e.ChannelID != "" {
-		channel, err := s.Channel(e.ChannelID)
+		currentChannel, err := s.Channel(e.ChannelID)
 		if err != nil {
 			fmt.Printf("Could not find a voice channel with the ID: %s\n", e.ChannelID)
 		}
 
-		fmt.Printf("User %s#%s joined the voice channel %s\n", user.Username, user.Discriminator, channel.Name)
+		fmt.Printf("User %s#%s joined the voice channel %s\n", user.Username, user.Discriminator, currentChannel.Name)
+
+		// Read the list of locked users.
+		fileTemp := storage.TempLockedUsers{}
+		lockedUsers, _ := fileTemp.Read()
+		// Check if user should be moved.
+		userIsLocked, lockedUser := storage.UserIsLocked(user.ID, lockedUsers)
+		if userIsLocked {
+			targetChannel, err := s.Channel(lockedUser.Channel)
+			if err != nil {
+				println(err)
+			}
+			// Checks that the users isn't already in the correct channel.
+			if lockedUser.Channel != currentChannel.ID {
+				s.GuildMemberMove(e.GuildID, user.ID, &targetChannel.ID)
+			}
+		}
 	} else {
 		fmt.Printf("User %s#%s left a voice channel\n", user.Username, user.Discriminator)
 	}

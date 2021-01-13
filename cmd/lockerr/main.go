@@ -9,8 +9,11 @@ import (
 
 	"github.com/Quoorex/Lockerr/internal/commands"
 	"github.com/Quoorex/Lockerr/internal/events"
+	"github.com/Quoorex/Lockerr/internal/middleware"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
+	"github.com/zekroTJA/shireikan"
 )
 
 // Starts the discord bot.
@@ -39,8 +42,28 @@ func main() {
 			discordgo.IntentsGuildMessages |
 			discordgo.IntentsGuildMembers)
 
+	// Register all events and commands.
+
 	registerEvents(s)
-	registerCommands(s, "<lockerr ")
+
+	handler := shireikan.NewHandler(&shireikan.Config{
+		GeneralPrefix:         "lockerr!",
+		AllowBots:             false,
+		AllowDM:               true,
+		ExecuteOnEdit:         true,
+		InvokeToLower:         true,
+		UseDefaultHelpCommand: true,
+		OnError: func(ctx shireikan.Context, typ shireikan.ErrorType, err error) {
+			log.Printf("[ERR] [%d] %s", typ, err.Error())
+		},
+	})
+
+	handler.RegisterMiddleware(&middleware.Permissions{})
+
+	handler.RegisterCommand(&commands.Lock{})
+	handler.RegisterCommand(&commands.Unlock{})
+
+	handler.RegisterHandlers(s)
 
 	// Open a websocket connection to Discord and begin listening.
 	err = s.Open()
@@ -64,17 +87,4 @@ func registerEvents(s *discordgo.Session) {
 	s.AddHandler(events.NewReadyHandler().Handle)
 	s.AddHandler(events.NewMessageHandler().Handle)
 	s.AddHandler(events.NewVoiceStateUpdateHandler().Handle)
-}
-
-func registerCommands(s *discordgo.Session, prefix string) {
-	cmdHandler := commands.NewCommandHandler(prefix)
-	cmdHandler.OnError = func(err error, ctx *commands.Context) {
-		ctx.Session.ChannelMessageSend(ctx.Message.ChannelID,
-			fmt.Sprintf("Command execution failed: %s", err.Error()))
-	}
-
-	cmdHandler.RegisterCommand(&commands.CmdPing{})
-	cmdHandler.RegisterMiddleware(&commands.MwPermissions{})
-
-	s.AddHandler(cmdHandler.HandleMessage)
 }
