@@ -4,7 +4,7 @@ ENV GO111MODULE=on \
 
 WORKDIR /build
 
-RUN apk add --no-cache git build-base upx
+RUN apk add --no-cache git build-base
 
 COPY go.mod .
 COPY go.sum .
@@ -13,8 +13,6 @@ RUN go mod download
 COPY . .
 # Build the binary without debug information.
 RUN go build -o bin/lockerr -ldflags '-w -s' cmd/lockerr/main.go
-# Compress the binary using upx.
-RUN upx --lzma bin/lockerr
 
 FROM alpine:latest AS final
 WORKDIR /app
