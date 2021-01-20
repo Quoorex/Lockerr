@@ -3,9 +3,9 @@ import os
 import discord
 from discord.ext import commands
 
-from cogs.general import General
-from cogs.locking import Locking
-from events import init_events
+from .cogs.general import General
+from .cogs.locking import Locking
+from .events import init_events
 
 # Load .env file.
 from dotenv import load_dotenv

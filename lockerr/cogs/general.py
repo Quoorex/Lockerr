@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
 
-from statics import PREFIX, PYTHON_VERSION, VERSION
+from lockerr.statics import PREFIX, PYTHON_VERSION, VERSION
 
 
 class General(commands.Cog):
